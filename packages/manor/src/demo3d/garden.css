@@ -1,0 +1,41 @@
+/* The kitchen garden's own menu (garden-menu.ts): seeds to take up, and four plots of six squares, as dug earth. */
+
+.help-card.garden-card { width: min(700px, 100%); }
+/* (Who sees to it is work.css: every place of work says that the same way.) */
+
+/* The seeds: each a crop to take up, with how long it takes and what it bears. */
+.garden-seeds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--paper-edge); }
+.seed { display: inline-flex; align-items: center; gap: 7px; }
+.seed-glyph { font-size: 20px; line-height: 1; }
+.seed-figures { font-size: 12px; font-variant-numeric: tabular-nums; opacity: 0.8; white-space: nowrap; }
+
+/* The plots, as seen from beyond the garden: the house at the top, the aisle between the two rows. */
+.garden-field { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; padding: 6px 16px 14px; background: #8fae62; border: 1px solid #6c8a45; border-radius: 6px; }
+.garden-aisle { grid-column: 1 / -1; height: 16px; margin: 8px -16px; background: #cdb98c; border-block: 1px solid #b29f73; }
+.garden-house { grid-column: 1 / -1; margin-bottom: 12px; font-size: 18px; line-height: 1; text-align: center; opacity: 0.8; }
+.plot { position: relative; padding: 5px; background: #5a3d2a; border: 1px solid #4a3422; border-radius: 5px; }
+.plot-squares { display: grid; gap: 4px; }
+.plot-all { position: absolute; top: -9px; right: -9px; padding: 1px 6px; font-size: 13px; line-height: 1.3; box-shadow: 0 2px 5px rgb(0 0 0 / 0.35); }
+
+.square { position: relative; display: grid; grid-template-columns: auto auto; justify-content: center; align-content: center; align-items: center; gap: 2px 5px; min-height: 58px; padding: 5px 3px 9px; font: inherit; color: #f3ead6; background: #6b4a33; border: 1px solid #4a3422; border-radius: 4px; cursor: pointer; overflow: hidden; }
+.square:hover { border-color: #f6d98a; }
+.square:focus-visible { outline: 2px solid #f6d98a; outline-offset: 1px; }
+/* Watered today, the earth is dark with it. */
+.square.wet { background: #55382a; }
+.square-glyph { font-size: 22px; line-height: 1; }
+/* Empty: a plus, or what is to be sown there, faint until it is in the ground. */
+.square:not(.growing) .square-glyph { opacity: 0.5; }
+.square-state { font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.square-state:empty { display: none; }
+.square-next { grid-column: 1 / -1; justify-self: center; font-size: 11px; line-height: 1; opacity: 0.85; }
+.square-next:empty { display: none; }
+/* How far it has grown, along the foot of the square; gold when it is ripe. */
+.square-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: calc(var(--grown, 0) * 100%); background: #7fb24f; }
+.square.ripe { border-color: #f6d98a; box-shadow: inset 0 0 0 1px #f6d98a; }
+.square.ripe .square-bar { background: #f6d98a; }
+
+@media (max-width: 640px) {
+  .garden-field { grid-template-columns: minmax(0, 1fr); }
+  .garden-field .plot { grid-column: 1 !important; grid-row: auto !important; margin-bottom: 10px; }
+  .garden-aisle { display: none; }
+}

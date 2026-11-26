@@ -1,0 +1,16 @@
+/* The controls (help.ts): what can be done, group by group, in three columns: the keys or the mouse, a controller, and what it does. */
+.help-card.controls-card { width: min(680px, 100%); }
+.controls-button { display: grid; place-items: center; }
+.controls-block { margin-top: 12px; }
+.controls-list { display: grid; gap: 1px; background: var(--paper-edge); border: 1px solid var(--paper-edge); border-radius: 4px; overflow: hidden; }
+.controls-row { display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 6fr) minmax(0, 20fr); gap: 12px; align-items: center; padding: 5px 10px; background: #fbf6e9; font-size: 13.5px; }
+.controls-keys, .controls-pad { font-weight: 600; }
+.controls-pad { color: var(--accent); white-space: pre; }
+/* The head of the columns: the pictures of what each is, with no rule round them. */
+.controls-columns { margin-top: 10px; padding-bottom: 0; background: none; color: var(--muted); }
+.controls-columns .controls-keys { font-size: 17px; line-height: 1; }
+.controls-columns .controls-pad { display: grid; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .controls-row { grid-template-columns: minmax(0, 9fr) minmax(0, 5fr) minmax(0, 14fr); gap: 8px; font-size: 12.5px; }
+}

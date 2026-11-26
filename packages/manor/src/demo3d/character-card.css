@@ -1,0 +1,11 @@
+/* The card at the right for whoever is being followed (character-card.ts): under the settings, clear of the map in the corner below. */
+.character-card { position: fixed; top: 72px; right: 16px; width: 208px; display: grid; gap: 8px; padding: 12px 14px; background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 8px 22px rgb(0 0 0 / 0.5), inset 0 0 0 3px #f9f3e4; }
+.character-top { display: flex; align-items: center; gap: 10px; }
+.character-face { flex: none; width: 46px; height: 46px; border: 2px solid #4a3422; }
+.character-name { margin: 0; font: 600 22px/1.1 "Cormorant Garamond", Georgia, serif; }
+.character-stat { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 5px 8px; background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 4px; font-size: 15px; }
+/* Under the rest: what she is mastering, each with its star, which is faint and grey until it is earned. */
+.character-heading { margin: 4px 0 0; font-size: 13px; }
+.character-star { filter: grayscale(1); opacity: 0.4; }
+.character-star.earned { filter: none; opacity: 1; }
+.character-count { font-weight: 600; font-variant-numeric: tabular-nums; }

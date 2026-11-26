@@ -1,0 +1,284 @@
+/* The map: a sheet of parchment laid over the picture of the house (map-view.ts). */
+
+/* It takes the whole window, over the house and the round buttons. The clock stays above it, and the panel (demo3d.css): the
+   desk runs under the panel, and what is set on the map's frame is set clear of it, by --map-clear (map-view.ts). */
+.map-veil { position: fixed; inset: 0; z-index: 3; }
+
+/* The frame the map is seen through: the whole window. Where the sheet does not reach, the desk it lies on shows. */
+.map-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(92deg, rgb(0 0 0 / 0) 0 22px, rgb(0 0 0 / 0.07) 22px 24px, rgb(0 0 0 / 0) 24px 61px, rgb(255 220 170 / 0.03) 61px 63px),
+    radial-gradient(ellipse at 50% 40%, #4a3526 0%, #33241a 60%, #21160f 100%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.map-frame:active { cursor: grabbing; }
+
+/* The paper. It is laid out at one size and scaled; its painting is faded toward plain paper, so that the pieces set on it stand out. */
+.map-sheet {
+  --map-fade: 0.18;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  background-size: 100% 100%;
+  box-shadow: 0 0 0 1px rgb(60 42 26 / 0.7), 0 14px 40px rgb(0 0 0 / 0.65);
+}
+.map-sheet::before { content: ""; position: absolute; inset: 0; background: #ece0c4; opacity: var(--map-fade); }
+.map-places, .map-tokens { position: absolute; inset: 0; }
+/* The layer of faces lies over the places: a press goes through it, and through a face on it, to the place underneath. */
+.map-tokens { pointer-events: none; }
+
+.map-ways { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-way { fill: none; stroke: rgb(74 52 34 / 0.6); stroke-width: 0.003; stroke-dasharray: 0.009 0.008; stroke-linecap: round; }
+
+/* A place is a button: pressing it asks what can be done there, or, for home, goes back to the house. It looks like what it is, not like a button. */
+:where(button[data-place]) { margin: 0; padding: 0; font: inherit; color: inherit; background: none; border: 0; appearance: none; }
+button[data-place] { cursor: pointer; }
+button[data-place]:focus-visible { outline: 3px solid #b8923a; outline-offset: 4px; border-radius: 8px; }
+button.map-place:hover .map-piece, button.map-place.picked .map-piece { filter: drop-shadow(6px 8px 5px rgb(74 52 34 / 0.45)) drop-shadow(0 0 7px #f6d98a) drop-shadow(0 0 2px #b8923a); }
+button.map-unknown:hover, button.map-unknown.picked { border-color: #b8923a; box-shadow: inset 0 0 0 4px #e2d0aa, inset 0 0 0 5px rgb(74 52 34 / 0.5), 0 0 0 4px rgb(246 217 138 / 0.8), 3px 5px 5px rgb(74 52 34 / 0.4); }
+
+/* A place that has been found: a piece in its own shape, in full colour, lying on the paper. */
+.map-place { position: absolute; display: grid; justify-items: center; transform: translateX(-50%); }
+/* Found this moment: the piece is set down on the map, from a little above it. */
+.map-place.arrived .map-piece { animation: map-set-down 0.7s cubic-bezier(0.3, 1.5, 0.5, 1); }
+@keyframes map-set-down {
+  from { opacity: 0; transform: translateY(-46px) scale(1.18); }
+  60% { opacity: 1; }
+  to { transform: none; }
+}
+.map-piece { display: block; width: 100%; filter: drop-shadow(6px 8px 5px rgb(74 52 34 / 0.45)); -webkit-user-drag: none; }
+.map-name {
+  margin-top: 3px;
+  font: 600 19px/1.1 "Cormorant Garamond", Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #3d2b1c;
+  white-space: nowrap;
+  text-shadow: 0 0 4px #ece0c4, 0 0 4px #ece0c4, 0 0 2px #ece0c4;
+}
+
+/* A place not yet visited: a round token, the same for every one. */
+.map-unknown {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  font: italic 600 38px/1 "Cormorant Garamond", Georgia, serif;
+  color: #4a3422;
+  background: #e2d0aa;
+  border: 3px solid #4a3422;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px #e2d0aa, inset 0 0 0 5px rgb(74 52 34 / 0.5), 3px 5px 5px rgb(74 52 34 / 0.4);
+}
+
+/* Someone's face, round, cut from the picture of her that walks the house. */
+.map-face {
+  display: block;
+  background-color: #f3ead6;
+  /* The picture is 256 by 352 with her head near the top of it: this much of it, about there. (How far down is set for each figure, whose heads are at different heights: map-places.ts.) */
+  background-size: 256% auto;
+  background-position: 54.5% 15.9%;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+}
+/* Someone out of doors: her face, where she is. */
+.map-token {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 3px solid #fbf6e9;
+  outline: 2px solid #4a3422;
+  box-shadow: 0 4px 7px rgb(0 0 0 / 0.45);
+}
+/* Her face can be pressed, for her menu (token-menu.ts), though the layer it is on lets presses through. */
+.map-token { pointer-events: auto; cursor: pointer; }
+.map-token:hover, .map-token:focus-visible { outline-color: var(--accent); }
+/* Whoever is followed: ringed, as her row in the list of the household is lit. */
+.map-token.followed { outline: 3px solid var(--accent); box-shadow: 0 0 0 6px rgb(246 217 138 / 0.75), 0 4px 7px rgb(0 0 0 / 0.45); }
+
+/* On a place's card: what was hidden there and has been found, in gold; and how much of the place is known, which is over the hundred then. */
+.map-card-slots { display: contents; }
+.map-slot.map-curio-slot { background: #fff7d6; border-color: #d9b648; }
+/* Hidden, and not yet come upon: shown only with the dev menu unlocked, faint and with a broken edge. */
+.map-slot.map-curio-slot.not-found { background: #efe6d0; border: 2px dashed rgb(74 52 34 / 0.45); box-shadow: none; }
+.map-card-share { margin-left: auto; font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.map-card-share.over { color: #a0700a; }
+
+/* Under her face, what she is at: a slip of paper with a few signs on it. */
+.map-token-status {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 7px;
+  font: 600 15px/1.3 "Cormorant Garamond", Georgia, serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #3d2b1c;
+  background: #fbf6e9;
+  border: 1.5px solid #4a3422;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.35);
+}
+.map-token-status:empty { display: none; }
+
+/* The card for a place that has been pressed: what it is, how far, what has been found there, what can be done, and who is to go. In the corner the map has least in. */
+.map-card {
+  position: absolute;
+  bottom: 18px;
+  left: calc(var(--map-clear, 0px) + 16px);
+  width: min(328px, calc(100% - var(--map-clear, 0px) - 32px));
+  display: grid;
+  gap: 9px;
+  padding: 12px 14px 13px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.5), inset 0 0 0 3px #f9f3e4;
+  cursor: default;
+}
+.map-card-top { display: grid; grid-template-columns: 52px minmax(0, 1fr) 28px; gap: 10px; align-items: center; }
+.map-card-piece { width: 52px; max-height: 48px; object-fit: contain; filter: drop-shadow(2px 3px 2px rgb(74 52 34 / 0.4)); }
+.map-card-unknown { display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto; font: italic 600 26px/1 "Cormorant Garamond", Georgia, serif; color: #4a3422; background: #e2d0aa; border: 2px solid #4a3422; border-radius: 50%; }
+.map-card-name { margin: 0; font: 700 22px/1.1 "Cormorant Garamond", Georgia, serif; }
+.map-card-close, .settings-close { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; color: var(--muted); background: none; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
+.map-card-close:hover, .settings-close:hover { color: var(--accent); border-color: var(--paper-edge); }
+.map-card-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 14px; }
+.map-card-glyph { width: 24px; font-size: 17px; text-align: center; }
+.map-card-text { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Each on one line ("30 min", not "30" over "min"), at any width the card is: where the row is too narrow, the bed and the house go under the stays together (map-card.ts), and the card is no wider. */
+.map-stay { padding: 4px 6px; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.map-doing { padding: 4px 9px; font-size: 13px; }
+.map-card-stays { min-height: 28px; flex-wrap: wrap; gap: 4px; }
+.map-card-stay-ends { display: flex; gap: 4px; margin-left: auto; }
+.map-card-row[hidden] { display: none; }
+/* Whether she is to be home before bed: lit while she is. */
+.map-bed { margin-left: auto; padding: 3px 6px; font-size: 15px; line-height: 1.2; }
+.map-bed:not(.on) { filter: grayscale(1); opacity: 0.55; }
+/* Then home, beside the bed: lit while the return is asked for beforehand (map-card.ts). With the bed put by, it goes to the end of the row by itself. */
+.map-bed:not([hidden]) + .map-then { margin-left: 0; }
+/* How a press sends her (card-send.ts): ➕ then, 👥 together, each lit while it is on; with together lit, the button that sends those chosen, at the end of the row. */
+.map-card-sends { gap: 4px; }
+.map-card-sends .map-bed { margin-left: 0; }
+.map-send-mode:disabled { cursor: default; }
+.map-send-party { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; padding: 4px 9px; font-size: 13px; }
+.map-send-party[hidden] { display: none; }
+.map-send-party:disabled { cursor: default; color: var(--muted); border-style: dashed; }
+.map-send-count { font-weight: 700; font-variant-numeric: tabular-nums; }
+.map-send-count:empty { display: none; }
+/* The slot that exploring is on to, where a place's search is aimed at one thing at a time. */
+.map-slot.sought { outline: 2px solid #7d3038; outline-offset: 2px; }
+/* What she would bring home, at the end of the row of times. */
+.map-card-brings { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; white-space: pre; }
+
+/* Someone out of doors asks what she is to do: the question, in the middle of the map, with the map dimmed behind it. Nothing else can be pressed until it is answered. */
+.map-ask-veil { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px 16px 16px calc(var(--map-clear, 0px) + 16px); background: rgb(20 14 10 / 0.5); cursor: default; }
+.map-ask {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(380px, 100%);
+  padding: 18px 20px 20px;
+  text-align: center;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.6), inset 0 0 0 3px #f9f3e4;
+  animation: map-ask-in 0.3s ease-out;
+}
+@keyframes map-ask-in { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+.map-ask-piece { width: 120px; filter: drop-shadow(4px 6px 4px rgb(74 52 34 / 0.45)); }
+/* What she has just found there, by its picture. */
+.map-ask-finds { display: flex; gap: 8px; margin-top: -6px; }
+.map-ask-find { display: grid; place-items: center; width: 40px; height: 40px; font-size: 22px; background: #e2d0aa; border: 2px solid #4a3422; border-radius: 50%; }
+.map-ask-says { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0; font-size: 15px; }
+.map-ask-says .map-face { flex: none; width: 34px; height: 34px; border: 2px solid #4a3422; }
+/* A party asks with all their faces, overlapping a little, side by side. */
+.map-ask-faces { display: flex; flex: none; }
+.map-ask-faces .map-face + .map-face { margin-left: -8px; }
+/* Why what is queued next cannot be done. */
+.map-ask-why { margin: -4px 0 0; font-size: 13.5px; color: var(--muted); }
+/* What next: two answers, staying and coming home, each a picture with its name in its tooltip (map-ask.ts). */
+.map-ask-heading { margin: 2px 0 0; }
+.map-ask-ends { display: flex; justify-content: center; gap: 10px; margin-top: 2px; }
+.map-ask-choice { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 4px 9px; border-bottom-width: 3px; border-radius: 5px; }
+.map-ask-choice:active:enabled { border-bottom-width: 1px; transform: translateY(2px); }
+.map-ask-choice:disabled, .map-ask-choice:disabled:hover { cursor: default; color: var(--muted); background: #ede4cf; border-style: dashed; }
+.map-ask-choice:disabled > * { filter: grayscale(1); opacity: 0.55; }
+/* Large enough to be pressed at once. */
+.map-ask-end { min-width: 52px; min-height: 46px; }
+.map-ask-end .map-ware-glyph { font-size: 24px; }
+
+/* Something a place holds: a ring that fills as its own points are come upon (a way on, a thing to gather, a shop), and then shows what it is. */
+.map-slot {
+  --got: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font: italic 600 17px/1 "Cormorant Garamond", Georgia, serif;
+  color: rgb(74 52 34 / 0.55);
+  background: conic-gradient(#b8923a calc(var(--got) * 360deg), #e6dcc4 0) border-box;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 15px #fbf6e9;
+}
+.map-slot.known { font-style: normal; font-size: 15px; color: #4a3422; background: #e2d0aa center / 78% no-repeat; border: 2px solid #4a3422; box-shadow: none; }
+
+.map-close, .map-zoom-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.45), inset 0 0 0 2px #f9f3e4;
+  cursor: pointer;
+}
+.map-close:hover, .map-zoom-button:hover:enabled { border-color: var(--accent); color: var(--accent); }
+.map-zoom-button:disabled { cursor: default; color: #a89f8e; background: #e3d9c2; }
+/* The way out is in the top right corner, where the round buttons are when the map is shut. */
+.map-close { position: absolute; top: 16px; right: 16px; }
+.map-zoom { position: absolute; right: 16px; bottom: 18px; display: grid; gap: 6px; }
+
+@media (max-width: 640px) {
+  .map-close { top: 12px; right: 12px; }
+  .map-zoom { right: 12px; }
+  .map-card { bottom: 12px; left: 12px; width: min(328px, calc(100% - 88px)); }
+}
+
+/* The town's card: the shops in a row, and what the chosen one sells, each by its picture and its price (town-wares.ts). */
+.map-wares { display: grid; gap: 6px; }
+/* A stall that buys, where what is sold says where it goes: a badge, not a button. */
+.map-stall { cursor: default; }
+/* The house has nothing these stalls deal in. */
+.map-nothing { opacity: 0.6; }
+/* Put by while the town is to be explored and not bought in. */
+.map-wares[hidden] { display: none; }
+.map-shop, .map-stall { padding: 4px 10px; font-size: 16px; }
+.map-shop-wares { flex-wrap: wrap; gap: 5px; }
+.map-ware, .map-good { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; font-size: 13px; }
+.map-ware-glyph { font-size: 16px; line-height: 1; }
+.map-ware-price, .map-ware-have { font-weight: 600; font-variant-numeric: tabular-nums; }
+.map-ware-have { color: var(--muted); }
+.map-ware.on .map-ware-have, .map-good.on .map-ware-have { color: inherit; }
+/* Of no use just now: it can still be looked at, and is drawn faint. */
+.map-ware.needless:not(.on) { opacity: 0.55; }
+
+/* Her menu, hung under her face (token-menu.ts): a slip of parchment with a row an item. */
+.map-token-menu { position: absolute; z-index: 1; display: grid; gap: 4px; min-width: 150px; padding: 6px; transform: translateX(-50%); background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 8px 22px rgb(0 0 0 / 0.5), inset 0 0 0 2px #f9f3e4; cursor: default; }
+.map-token-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); text-align: left; background: #fbf6e9; border: 1px solid var(--paper-edge); border-bottom-width: 2px; border-radius: 4px; cursor: pointer; }
+.map-token-item:hover:enabled, .map-token-item:focus-visible { border-color: var(--accent); color: var(--accent); }
+.map-token-item:disabled { cursor: default; color: var(--muted); border-style: dashed; }
+.map-token-item:disabled .map-token-item-glyph { filter: grayscale(1); opacity: 0.55; }
+.map-token-item-glyph { font-size: 17px; line-height: 1; }
+/* One of a party (map-tokens.ts): ringed alike in gold, the faces close together. */
+.map-token.party { outline-color: #b8923a; }

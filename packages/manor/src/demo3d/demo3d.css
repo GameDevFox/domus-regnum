@@ -1,0 +1,428 @@
+:root {
+  /* The list of the household at the left: where it is and how wide, which a window that stands clear of it must know (menu.css). */
+  --panel-left: 16px;
+  --panel-width: 360px;
+  --ink: #2b2420;
+  --paper: #f3ead6;
+  --paper-edge: #cdbf9f;
+  --accent: #7d3038;
+  --muted: #6d6152;
+  /* The map's tile in the corner: how far in it sits, and how big it is. What sits over it is placed by these (menu.css). */
+  --map-right: 16px;
+  --map-bottom: 18px;
+  --map-size: 92px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  /* The map floats in the dark, like a tactics diorama. */
+  /* Its three colours follow the time of day (src/demo3d/sky.ts); these are the day's. */
+  background: radial-gradient(ellipse at 50% 38%, var(--sky-inner, #a9d6f5) 0%, var(--sky-mid, #6fb0e6) 45%, var(--sky-edge, #3f7fc4) 100%);
+  color: var(--ink);
+  font-family: "Lora", Georgia, serif;
+}
+
+#stage { position: fixed; inset: 0; }
+#stage canvas { display: block; touch-action: none; cursor: grab; }
+#stage canvas:active { cursor: grabbing; }
+
+#panel {
+  position: fixed;
+  top: 16px;
+  left: var(--panel-left);
+  /* (Wide enough for a name, what she is at, and a button for each job beside it.) */
+  width: var(--panel-width);
+  /* On a short screen the panel scrolls inside itself: it never runs off the bottom, nor under the floor chooser at the foot of the same side (about 210px tall with its margin). */
+  max-height: calc(100vh - 16px - 210px);
+  overflow-y: auto;
+  padding: 14px 16px 12px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45), inset 0 0 0 3px #f9f3e4;
+}
+
+.title { margin: 0; font: 700 28px/1 "Cormorant Garamond", Georgia, serif; letter-spacing: 0.02em; }
+
+/* The fold button, at the panel's corner. */
+.panel-fold { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; color: var(--muted); background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 4px; cursor: pointer; }
+.panel-fold:hover { color: var(--accent); border-color: var(--accent); }
+/* Folded away: only what the house has, one thing under another, and the button that opens it again. */
+#panel.folded { width: auto; padding: 46px 8px 8px; }
+#panel.folded > :not(.panel-fold):not(#ledger):not(#cast) { display: none; }
+/* …and of the household, each one's face and the badge of what she is at, and no more (the author's, 2026-11-16: "When left side menu collpased, show only character icon and and job icon"). */
+#panel.folded .cast { margin-top: 8px; justify-content: center; }
+#panel.folded .person { grid-template-columns: auto 30px; gap: 4px; }
+#panel.folded .follow { grid-template-columns: auto; padding: 2px; border-radius: 50%; }
+#panel.folded .follow > :not(.map-face) { display: none; }
+#panel.folded .work, #panel.folded .work-ring { width: 30px; height: 30px; }
+/* Folded, a row is her face and her badge: her steps are put by. */
+#panel.folded .person .steps { display: none; }
+#panel.folded .work-glyph { font-size: 14px; }
+#panel.folded .ledger { margin: 0; }
+#panel.folded .ledger-row { flex-direction: column; flex-wrap: nowrap; }
+#panel.folded .ledger-row + .ledger-row { display: none; }
+#panel.folded .tally { justify-content: space-between; }
+
+/* The way into the map: the map itself, small, in the corner nothing else uses, with the faces of whoever is out on it. */
+.map-widget {
+  position: fixed;
+  right: var(--map-right);
+  bottom: var(--map-bottom);
+  width: var(--map-size);
+  height: var(--map-size);
+  padding: 0;
+  background: center 38% / 66% no-repeat, center / cover no-repeat;
+  border: 1px solid var(--paper-edge);
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.5), inset 0 0 0 3px #f9f3e4, inset 0 0 0 4px rgb(125 100 60 / 0.5);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.map-widget:hover { transform: translateY(-2px) scale(1.04); border-color: var(--accent); }
+.map-widget:focus-visible { outline: 3px solid #f6d98a; outline-offset: 2px; }
+.map-widget-out { position: absolute; left: 6px; right: 6px; bottom: 6px; display: flex; justify-content: center; gap: 2px; pointer-events: none; }
+.map-widget-out .map-face { width: 22px; height: 22px; border: 2px solid #fbf6e9; box-shadow: 0 1px 3px rgb(0 0 0 / 0.5); }
+.heading { margin: 4px 0 6px; font: 600 15px/1 "Cormorant Garamond", Georgia, serif; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+
+.row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+
+.chip, .follow {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: #fbf6e9;
+  border: 1px solid var(--paper-edge);
+  border-radius: 4px;
+}
+.chip { padding: 5px 9px; font-size: 13px; }
+.chip:hover, .follow:hover { border-color: var(--accent); }
+.chip.on, .person.on .follow { background: var(--accent); border-color: var(--accent); color: #fbf6e9; }
+
+/* What the house has: a picture and a number each. */
+.ledger { display: flex; flex-direction: column; gap: 5px; margin: 10px 0 12px; }
+.ledger-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.tally { display: inline-flex; align-items: center; gap: 4px; padding: 4px 7px; background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 4px; font-size: 14px; line-height: 1.2; }
+.tally[hidden] { display: none; }
+.tally-count { min-width: 1.1em; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+/* Sold and lost are the shop's doings, not stock: set a little apart from it. */
+.tally.changed { animation: tally-changed 0.6s ease-out; }
+@keyframes tally-changed {
+  from { background: #f6d98a; border-color: #b8923a; }
+  to { background: #fbf6e9; border-color: var(--paper-edge); }
+}
+
+/* Things for sale, each a button the width of the panel: what you get on the left, its price on the right. */
+.market { display: grid; gap: 5px; margin-bottom: 12px; }
+.ware {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 7px 6px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: #fbf6e9;
+  border: 1px solid var(--paper-edge);
+  border-bottom-width: 3px;
+  border-radius: 5px;
+}
+.ware-gets { display: inline-flex; align-items: baseline; gap: 7px; }
+.ware-name { font-weight: 600; }
+.ware-note { font-size: 12.5px; color: var(--muted); }
+.ware-price { padding: 3px 10px; font-weight: 600; color: #fbf6e9; background: var(--accent); border-radius: 999px; font-variant-numeric: tabular-nums; }
+/* A thing ordered by size: the row itself is not pressed, each size on it is. */
+.ware.sizes { cursor: default; padding: 5px 6px 5px 10px; border-bottom-width: 1px; }
+.ware-sizes { display: inline-flex; gap: 5px; }
+.size { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px 4px 4px; font: inherit; color: inherit; cursor: pointer; background: #f4ecd8; border: 1px solid var(--paper-edge); border-bottom-width: 3px; border-radius: 5px; }
+.size-count { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.size .ware-price { padding: 2px 8px; font-size: 13px; }
+.size:hover:enabled { border-color: var(--accent); }
+.size:active:enabled { border-bottom-width: 1px; margin-top: 2px; }
+.size:disabled { cursor: default; }
+.size:disabled .ware-price { background: #a89f8e; }
+.ware:hover:enabled { border-color: var(--accent); }
+.ware:active:enabled { border-bottom-width: 1px; margin-top: 2px; }
+/* Not enough coin: the price goes grey, and the button does not press. */
+.ware:disabled { cursor: default; color: var(--muted); }
+.ware:disabled .ware-price { background: #a89f8e; }
+.ware:disabled .ware-glyph { filter: grayscale(1); }
+/* The Master's inventing: a measure his work fills, what there is to choose when it is full, and what has been made. */
+.lab { display: grid; gap: 5px; margin-bottom: 12px; }
+.measure { display: flex; align-items: center; gap: 8px; padding: 2px 2px 2px 4px; }
+.measure[hidden] { display: none; }
+.measure-glyph { font-size: 16px; }
+.measure-track { flex: 1; height: 10px; background: #e6dcc4; border: 1px solid var(--paper-edge); border-radius: 999px; overflow: hidden; }
+.measure-fill { display: block; height: 100%; background: linear-gradient(90deg, #3f9c8f, #5fd3c4); border-radius: 999px; }
+.measure.full .measure-fill { background: linear-gradient(90deg, #d9a531, #f6d98a); animation: measure-full 1.1s ease-in-out infinite alternate; }
+@keyframes measure-full { from { filter: brightness(0.95); } to { filter: brightness(1.2); } }
+.offers { display: grid; gap: 5px; }
+.offers:empty, .made:empty { display: none; }
+.offer { border-color: #b8923a; background: #fbf0c9; }
+.offer .ware-price { background: #b8923a; }
+.made { display: flex; gap: 5px; }
+.device { display: inline-grid; place-items: center; width: 30px; height: 30px; font-size: 17px; background: #e3f4f0; border: 1px solid #7fbfb4; border-radius: 4px; }
+
+/* What has been ordered: a cart, its load, and when it is due. */
+.coming { display: flex; flex-wrap: wrap; gap: 5px; }
+.coming:empty { display: none; }
+.cart { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; font-size: 13px; background: #f4ecd8; border: 1px dashed var(--paper-edge); border-radius: 4px; }
+.cart-due { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+/* A feat: a card that drops in under the clock, stays a few seconds, and is gone. */
+.feats { z-index: 4; position: fixed; top: 76px; left: 50%; transform: translateX(-50%); display: grid; gap: 6px; justify-items: center; pointer-events: none; }
+.feat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 12px;
+  font: 600 17px/1.2 "Cormorant Garamond", Georgia, serif;
+  color: var(--ink);
+  background: #fbf0c9;
+  border: 1px solid #b8923a;
+  border-bottom-width: 3px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgb(40 30 10 / 0.3);
+  animation: feat-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1), feat-out 0.6s ease-in 5.4s forwards;
+}
+.feat-star { font-size: 18px; animation: feat-spin 1.2s ease-out; }
+/* A place that has been found: its piece, small. */
+.feat-piece { height: 34px; margin: -6px 0; }
+@keyframes feat-in { from { opacity: 0; transform: translateY(-14px) scale(0.8); } to { opacity: 1; transform: none; } }
+@keyframes feat-out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes feat-spin { from { transform: rotate(-180deg) scale(0.3); } to { transform: none; } }
+/* Beside a name: the mastery she has. */
+.badge { margin-left: 4px; font-size: 11px; }
+
+.cast { display: grid; gap: 5px; }
+/* A person: the button that follows them, then the badge of what she is at. */
+.person { display: grid; grid-template-columns: minmax(0, 1fr) 36px; gap: 5px; align-items: center; }
+.follow { display: grid; grid-template-columns: 18px 26px 80px minmax(0, 1fr); gap: 6px; align-items: center; padding: 4px 8px 4px 6px; text-align: left; }
+/* Her face, after her key and before her name. */
+.follow .map-face { width: 26px; height: 26px; border: 1.5px solid #4a3422; }
+.person.on .follow .map-face { border-color: #fbf6e9; }
+/* What she is at, as a picture, with a ring round it for how far through it she is (panel.ts). Pressed, it opens the place she is at it. */
+.work { position: relative; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; font: inherit; color: inherit; cursor: pointer; background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 50%; }
+.work:hover:enabled { border-color: var(--accent); }
+.work:disabled { cursor: default; }
+.work-glyph { font-size: 16px; line-height: 1; }
+/* At nothing: an empty badge, dashed. */
+.work.idle { background: none; border-style: dashed; }
+.work-ring { position: absolute; inset: -1px; width: 36px; height: 36px; transform: rotate(-90deg); pointer-events: none; }
+.work-ring circle { fill: none; stroke: #4f8a3c; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease-out; }
+/* Stood waiting on something: the ring is amber. */
+.work.waiting .work-ring circle { stroke: #d08a1e; }
+.key {
+  font: 600 12px/18px "Lora", Georgia, serif;
+  text-align: center;
+  color: var(--muted);
+  background: #f9f3e4;
+  border: 1px solid var(--paper-edge);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+}
+.person.on .key { color: var(--accent); }
+.name { font-weight: 600; font-size: 14px; }
+/* Under her row, while she is out: her steps (step-row.ts). */
+.person .steps { grid-column: 1 / -1; padding-left: 30px; }
+.doing { font-size: 12.5px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.help-veil {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(10 12 22 / 0.55);
+  /* Over everything, the map included. */
+  z-index: 5;
+}
+.help-card {
+  width: min(560px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 18px 20px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.6), inset 0 0 0 3px #f9f3e4;
+}
+.help-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.help-list { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.help-key { font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+.help-does { margin: 0; font-size: 13.5px; }
+.help-again { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.help-again input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+/* The floor chooser: a house in section. Its layers are buttons, drawn as storeys. */
+.floors {
+  position: fixed;
+  left: 20px;
+  bottom: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55));
+  /* Drawn small and crisp, shown a little larger. */
+  transform: scale(1.2);
+  transform-origin: bottom left;
+}
+.floors-stack { display: grid; justify-items: center; }
+.storey {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+  /* The storeys not being looked into are see-through; the one that is, is solid. */
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+.storey svg { display: block; }
+.storey:hover { opacity: 0.8; }
+.storey:focus-visible { outline: 2px solid #f6d98a; outline-offset: 2px; }
+.storey .pane { fill: #37425a; }
+/* The one being looked into is solid, lit from inside and edged in gilt. */
+.storey.on { opacity: 1; }
+.storey.on .pane { fill: #f6d98a; }
+.storey.on .wall { stroke: #d9b765; stroke-width: 2; }
+/* With the roof on, the whole house is what is being looked at. */
+.floors-stack.whole .storey { opacity: 1; }
+.floors-stack.whole .storey .pane { fill: #f6d98a; }
+.floors-lawn { width: 136px; background: #5f8a3c; border-top: 2px solid #86b25a; }
+
+/* Small groups of controls: a pill at the top (time) and one at the foot (turning) of the screen. */
+.pill {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45), inset 0 0 0 2px #f9f3e4;
+}
+/* The clock stays above the map when it is open (map.css): time goes on, and whoever is out is seen walking by it. */
+.pill-top { top: 16px; z-index: 4; }
+.pill-bottom { bottom: 18px; }
+.pill-button {
+  min-width: 46px;
+  padding: 7px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.pill-button:hover { background: #e7dcc2; }
+.pill-button.on { background: var(--accent); color: #fbf6e9; }
+/* The speeds there are only in dev mode (transport.ts): set apart by the colour of the wrench. */
+.pill-dev:not(.on) { color: #8a5a1c; font-style: italic; }
+.pill-glyph { min-width: 52px; font-size: 17px; line-height: 1; }
+/* Held by a question someone is waiting on: the play sign, faint (transport.ts). */
+.pill-glyph.held { color: var(--muted); }
+/* Someone waiting to be told what next: her face with a question mark, by the dial (ask-mark.ts). */
+.pill-ask { display: inline-flex; align-items: center; gap: 2px; min-width: 0; padding: 3px 8px; background: #f6d98a; animation: pill-ask-in 0.3s ease-out; }
+.pill-ask[hidden] { display: none; }
+.pill-ask:hover { background: #efc96a; }
+.pill-ask .map-face { width: 26px; height: 26px; border: 1.5px solid #4a3422; }
+.pill-ask-mark { font-size: 15px; line-height: 1; }
+@keyframes pill-ask-in { from { transform: scale(0.6); } to { transform: none; } }
+
+/* The time of day, at the head of the time controls: the day's number, the sun on its arch, the time in figures. */
+.dial { display: flex; align-items: center; gap: 6px; padding: 0 10px 0 8px; margin-right: 2px; border-right: 1px solid var(--paper-edge); border-radius: 999px 0 0 999px; }
+.dial.night { background: #2a2f4a; color: #f3ead6; border-right-color: #2a2f4a; }
+/* The day, as a leaf of a calendar at the head of the clock: a button that opens the calendar. Its band is the season's colour. */
+.dial-day { align-self: center; min-width: 26px; margin: 0 2px 0 6px; padding: 2px 5px; font: inherit; font-weight: 600; font-size: 13px; text-align: center; font-variant-numeric: tabular-nums; background: #fbf6e9; color: var(--ink); border: 1px solid var(--paper-edge); border-top: 4px solid var(--accent); border-radius: 3px; cursor: pointer; }
+.dial-day:hover { border-color: var(--accent); }
+.dial-day[data-season="spring"] { border-top-color: #6f9e3f; }
+.dial-day[data-season="summer"] { border-top-color: #d9a531; }
+.dial-day[data-season="autumn"] { border-top-color: #b5562a; }
+.dial-day[data-season="winter"] { border-top-color: #5b7fa8; }
+.dial-time { min-width: 3.1em; font-size: 14px; font-variant-numeric: tabular-nums; }
+.dial-arch { display: block; overflow: visible; }
+.dial-horizon { stroke: var(--paper-edge); stroke-width: 1; }
+.dial-day-line, .dial-shop, .dial-evening { fill: none; stroke-linecap: round; }
+.dial-day-line { stroke: #b9ab8b; stroke-width: 2; }
+.dial-shop { stroke: #d9a531; stroke-width: 4; }
+.dial-evening { stroke: #5b5f9a; stroke-width: 4; }
+/* What the house is waiting for, on the same arch: a stretch from when it was begun to when it is due. */
+.dial-plan { fill: none; stroke-width: 2.5; stroke-linecap: round; }
+.dial-plan-cart { stroke: #7a4f2a; stroke-dasharray: 1 4; }
+.dial-plan.runs-on { opacity: 0.6; }
+/* Someone out of the house: green while she will be home by bedtime, the night's blue when she will be out overnight. */
+.dial-plan-errand, .dial-plan-explore, .dial-plan-gather, .dial-plan-walk { stroke: #3f8f5a; stroke-width: 3.5; }
+.dial-plan-errand.runs-on, .dial-plan-explore.runs-on, .dial-plan-gather.runs-on, .dial-plan-walk.runs-on { stroke: #5b5f9a; opacity: 1; }
+/* Its end not known (she asks what next when it is done): broken, as a thing that may yet go on. */
+.dial-plan.open { stroke-dasharray: 5 2.5; }
+.dial-plan.ghost { opacity: 0.55; stroke-dasharray: 3 3; }
+.dial-plan-glyph { pointer-events: none; }
+.dial-sun { fill: #f3b62c; stroke: #a8741a; stroke-width: 1.2; }
+.dial-moon { fill: #f3ead6; stroke: #8f93c4; stroke-width: 1; display: none; }
+.dial.night .dial-sun { display: none; }
+.dial.night .dial-moon { display: block; }
+.dial.night .dial-day-line { stroke: #555a80; }
+.dial.night .dial-horizon { stroke: #6a6f9a; }
+
+/* The round buttons: the gear in the top right corner, and those it keeps on its card (help, how the walls come and go, the performance graph). */
+.help-button, .round-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font: 700 22px/1 "Cormorant Garamond", Georgia, serif;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 50%;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), inset 0 0 0 2px #f9f3e4;
+  cursor: pointer;
+}
+.help-button:hover, .round-button:hover { border-color: var(--accent); color: var(--accent); }
+.round-button { display: grid; place-items: center; }
+/* The settings: a card of the controls seldom wanted, each a round button with its name beside it. */
+.settings-veil { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 16px; background: rgb(10 12 22 / 0.55); }
+.settings-veil[hidden] { display: none; }
+.settings-card { width: min(380px, 100%); display: grid; gap: 12px; }
+.settings-row { display: flex; align-items: center; gap: 12px; }
+.settings-slot { display: grid; }
+.settings-slot .help-button, .settings-slot .round-button { position: static; box-shadow: 0 2px 6px rgb(0 0 0 / 0.3), inset 0 0 0 2px #f9f3e4; }
+.settings-says { font-size: 15px; }
+.round-button.on, .round-button.on:hover { background: var(--accent); border-color: var(--accent); color: #fbf6e9; }
+/* The performance graph (stats.js), over the map's tile and the two round buttons that stand on it (menu.css). */
+.perf-graph { position: fixed; right: var(--map-right); bottom: calc(var(--map-bottom) + var(--map-size) + var(--menu-lift) + var(--menu-button) + var(--menu-lift)); cursor: pointer; opacity: 0.92; border-radius: 4px; overflow: hidden; box-shadow: 0 6px 18px rgb(0 0 0 / 0.4); }
+
+/* The panel stays up over the map, as the clock does (the author's, 2026-11-18: "should always show the left side menu, whether
+   we're on the manor screen or the map screen"): the map (z-index 3, map.css) runs under it, and sets its cards clear of it (map-view.ts).
+   On a wide screen only, where the picture of the house makes room for the panel too (page-tuning.ts, WIDE_SCREEN): on a narrower
+   one the map lies over the panel, as it did. */
+@media (min-width: 900px) {
+  #panel { z-index: 4; }
+}
+
+/* On a narrower screen the panel reaches the middle: time sits beside the help button instead of over it. */
+@media (max-width: 920px) {
+  .pill-top { left: auto; right: 68px; transform: none; }
+}
+
+@media (max-width: 640px) {
+  #panel { left: 12px; right: 64px; width: auto; top: 12px; padding: 10px 12px; }
+  .floors { left: 10px; transform: scale(0.8); transform-origin: bottom left; }
+  .settings-button { top: 12px; right: 12px; }
+  :root { --map-right: 12px; --map-bottom: 12px; --map-size: 68px; }
+}

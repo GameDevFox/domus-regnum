@@ -1,0 +1,49 @@
+/* The colour room (palette-room.ts): palette swaps tried out, with room to see them. A window of the dev menu's (dev-menu.css has what every such window shares). */
+.palette-room {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  width: min(1040px, 100%);
+  /* Reckoned from the window, not from the veil: a share of a height that is itself left to its contents is no height at all, and the portrait would stretch the room to its own. */
+  height: min(760px, calc(100vh - 32px));
+}
+.palette-body { display: grid; grid-template-columns: 150px minmax(0, 1fr) 232px; gap: 18px; min-height: 0; }
+
+/* Who: each a small picture and a name. */
+.palette-who { display: grid; align-content: start; gap: 6px; }
+.palette-person { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: center; padding: 5px 8px 5px 5px; font: inherit; font-size: 14px; font-weight: 600; color: inherit; text-align: left; cursor: pointer; background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 5px; }
+.palette-person:hover { border-color: var(--accent); }
+.palette-person.on { color: #fbf6e9; background: var(--accent); border-color: var(--accent); }
+.palette-face { width: 40px; height: 52px; object-fit: cover; object-position: 50% 6%; background: #e6dcc4; border: 1px solid var(--paper-edge); border-radius: 4px; }
+
+/* Her picture, large, on a ground of its own so that pale and dark colours both show. */
+.palette-stage { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; min-height: 0; }
+.palette-tabs, .palette-turns { display: flex; align-items: center; gap: 6px; }
+.palette-view { display: grid; place-items: center; min-height: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #6f7f9a 0%, #46516a 70%, #343c50 100%); border: 1px solid var(--paper-edge); border-radius: 6px; }
+.palette-view { position: relative; }
+.palette-big { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); object-fit: contain; filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.4)); }
+/* The picture of someone who walks the house is small: it is shown at its full height here all the same. */
+.palette-big.figure { image-rendering: auto; }
+.palette-big.mirrored { transform: scaleX(-1); }
+.palette-facing { margin-left: 6px; font-size: 13px; color: var(--muted); }
+
+/* The colour: the part it is of, the picker, and the way back. */
+.palette-pick { display: grid; align-content: start; gap: 10px; }
+.palette-part { font: 600 15px/1.2 "Cormorant Garamond", Georgia, serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.palette-note { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+.palette-note[hidden] { display: none; }
+.colour-picker { display: grid; gap: 10px; }
+.colour-picker .react-colorful { width: 100%; height: 210px; }
+.colour-number { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.colour-number input { width: 96px; padding: 4px 8px; font: inherit; font-variant-numeric: tabular-nums; text-transform: uppercase; color: var(--ink); background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 4px; }
+.colour-presets { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+.colour-preset { aspect-ratio: 1; padding: 0; cursor: pointer; border: 1px solid rgb(0 0 0 / 0.35); border-radius: 4px; }
+.colour-preset:hover { transform: scale(1.12); }
+.colour-preset.on { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+@media (max-width: 760px) {
+  .palette-room { height: calc(100vh - 32px); overflow-y: auto; }
+  .palette-body { grid-template-columns: 1fr; }
+  .palette-who { grid-template-columns: repeat(2, 1fr); }
+  .palette-view { height: 46vh; }
+}

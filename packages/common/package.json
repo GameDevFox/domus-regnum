@@ -1,0 +1,34 @@
+{
+  "name": "@kitsune/common",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-only",
+  "author": "Edward Nicholes Jr.",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf ./coverage ./dist",
+    "node:create": "ts-node ./bin/create-id.ts",
+    "node:generate": "ts-node ./bin/generate-nodes.ts",
+    "node:lookup": "ts-node ./bin/lookup.ts",
+    "start": "tsc --watch --preserveWatchOutput",
+    "test": "jest"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "lodash": "^4.17.21",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^24.3.0",
+    "@types/sqlite3": "^3.1.8",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1",
+    "jest-matcher-utils": "^29.7.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.4.4"
+  }
+}

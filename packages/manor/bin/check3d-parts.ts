@@ -1,0 +1,34 @@
+// The parts of the 3D demo page's check that open pages of their own, in the order check3d.ts runs them. A new part is added here, and nowhere else.
+import { checkBook } from "./check3d-book";
+import { checkCall } from "./check3d-call";
+import { checkCalendar } from "./check3d-calendar";
+import { checkCharacter } from "./check3d-character";
+import { checkClimbers } from "./check3d-climbers";
+import { checkDay } from "./check3d-day";
+import { checkDev } from "./check3d-dev";
+import { checkDoors } from "./check3d-doors";
+import { checkFollowed, checkFollowedAcross } from "./check3d-follow";
+import { checkGamepad } from "./check3d-gamepad";
+import { checkGarden } from "./check3d-garden";
+import { checkGraph } from "./check3d-graph";
+import { checkLoading } from "./check3d-loading";
+import { checkMap } from "./check3d-map";
+import { checkMapPanel } from "./check3d-map-panel";
+import { checkNext } from "./check3d-next";
+import { checkOdds } from "./check3d-odds";
+import { checkOuting } from "./check3d-outing";
+import { checkOutingNight } from "./check3d-outing-night";
+import { checkParty } from "./check3d-party";
+import { checkPick } from "./check3d-pick";
+import { checkPie } from "./check3d-pie";
+import { checkQueue } from "./check3d-queue";
+import { checkRooms } from "./check3d-rooms";
+import { checkScene } from "./check3d-scene";
+import { checkShops } from "./check3d-shops";
+import { checkStay } from "./check3d-stay";
+import { checkTolerance } from "./check3d-tolerance";
+import { checkTrade } from "./check3d-trade";
+import { checkVisitors } from "./check3d-visitors";
+import { checkWork } from "./check3d-work";
+
+export const PARTS = [checkFollowed, checkDay, checkGraph, checkTrade, checkPick, checkMap, checkMapPanel, checkOuting, checkOutingNight, checkNext, checkStay, checkCall, checkQueue, checkParty, checkFollowedAcross, checkScene, checkDev, checkOdds, checkCalendar, checkLoading, checkVisitors, checkPie, checkBook, checkCharacter, checkGamepad, checkGarden, checkDoors, checkRooms, checkShops, checkClimbers, checkTolerance, checkWork];

@@ -1,0 +1,57 @@
+/* Only the Three.js canvas wrappers need plain CSS now (layout/typography is Tailwind/shadcn).
+   The inner <canvas> fills its wrapper; the wrapper's size is set here. */
+
+.domus-canvas {
+  width: 1280px;
+  height: 720px;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.domus-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fullscreen targets the frame (not the bare canvas) so the overlay controls stay visible.
+   Make the canvas fill the screen and drop its framing chrome. */
+.domus-frame:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+/* The intermediate wrapper must fill the frame too, or the canvas's `width:100%` has no definite
+   parent size and stays stuck at its windowed size. */
+.domus-frame:fullscreen .domus-canvas-host {
+  width: 100%;
+  height: 100%;
+}
+.domus-frame:fullscreen .domus-canvas {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.path-debug-canvas {
+  width: 100%;
+  height: 480px;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.path-debug-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+

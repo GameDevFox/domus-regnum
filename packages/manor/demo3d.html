@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Domus — the house</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Sans+Deseret&display=swap" rel="stylesheet" />
+    <!--
+      The loading screen, styled here and not in a stylesheet: it is on the screen from the first
+      thing the browser draws, before any script or stylesheet has come, so that the page never
+      shows as bare text on white. src/demo3d/loading.ts takes it away once the house is drawn.
+    -->
+    <style>
+      html, body { height: 100%; margin: 0; background: #21160f; }
+      #loading { position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; color: #f3ead6; background: radial-gradient(ellipse at 50% 40%, #4a3526 0%, #33241a 60%, #21160f 100%); font-family: "Cormorant Garamond", Georgia, serif; transition: opacity 0.4s; }
+      #loading.going { opacity: 0; }
+      .loading-house { width: min(220px, 50vw); height: auto; }
+      .loading-title { margin: 0; font-size: 44px; font-weight: 600; letter-spacing: 0.06em; }
+      /* While it loads, the windows of the house are lit one after another. */
+      .loading-house .pane { fill: #3a2a1e; animation: loading-lit 3s infinite; }
+      .loading-house .pane:nth-of-type(2) { animation-delay: 0.3s; }
+      .loading-house .pane:nth-of-type(3) { animation-delay: 0.6s; }
+      .loading-house .pane:nth-of-type(4) { animation-delay: 0.9s; }
+      .loading-house .pane:nth-of-type(5) { animation-delay: 1.2s; }
+      @keyframes loading-lit { 0%, 12% { fill: #3a2a1e; } 32%, 82% { fill: #f6c860; } 100% { fill: #3a2a1e; } }
+      @media (prefers-reduced-motion: reduce) { .loading-house .pane { animation: none; fill: #f6c860; } }
+      /* What went wrong, when the house cannot be opened: the windows stay dark, and it is said in words. */
+      .loading-says { display: none; max-width: 30em; margin: 0; font: 18px/1.5 Georgia, serif; }
+      #loading[data-state] .pane { animation: none; fill: #3a2a1e; }
+      #loading[data-state="failed"] .loading-failed, #loading[data-state="old"] .loading-old { display: block; }
+      .loading-says button { margin-top: 12px; padding: 6px 18px; font: inherit; color: #2b2420; background: #f3ead6; border: 1px solid #cdbf9f; border-radius: 4px; cursor: pointer; }
+    </style>
+    <noscript>
+      <style>
+        .loading-house .pane { animation: none; fill: #3a2a1e; }
+        .loading-says.loading-noscript { display: block; }
+      </style>
+    </noscript>
+  </head>
+  <body>
+    <div id="loading" role="status" aria-label="Loading">
+      <svg class="loading-house" viewBox="0 0 120 84" aria-hidden="true">
+        <rect x="30" y="8" width="8" height="18" fill="#8d7a5e" />
+        <rect x="82" y="8" width="8" height="18" fill="#8d7a5e" />
+        <path d="M12 38 L60 12 L108 38 Z" fill="#6d4a3a" />
+        <rect x="20" y="38" width="80" height="40" fill="#cdbf9f" />
+        <rect class="pane" x="29" y="44" width="11" height="10" />
+        <rect class="pane" x="54.5" y="44" width="11" height="10" />
+        <rect class="pane" x="80" y="44" width="11" height="10" />
+        <rect class="pane" x="29" y="61" width="11" height="10" />
+        <rect class="pane" x="80" y="61" width="11" height="10" />
+        <path d="M54 78 V63 a6 6 0 0 1 12 0 V78 Z" fill="#6d4a3a" />
+        <rect x="8" y="78" width="104" height="3" rx="1.5" fill="#8d7a5e" />
+      </svg>
+      <p class="loading-title">Domus</p>
+      <p class="loading-says loading-failed">The house could not be opened.<br /><button type="button">Try again</button></p>
+      <p class="loading-says loading-old">This browser is too old to open the house. A current Firefox, Chrome, Edge or Safari will.</p>
+      <noscript><p class="loading-says loading-noscript">The house needs JavaScript to open. Turn it on for this page, and load it again.</p></noscript>
+    </div>
+    <script>
+      // If the page's own script cannot be fetched, or stops before the house is drawn, the loading screen says so.
+      (() => {
+        const loading = document.getElementById("loading");
+        // (Once the house is drawn the loading screen is gone from the page, and this has nothing to say.)
+        const fail = () => {
+          if (loading.isConnected) loading.dataset.state = "failed";
+        };
+        // (Caught on its way down: a script that cannot be fetched says so on its own element, and nowhere else. A picture that cannot be fetched is not this.)
+        addEventListener("error", (e) => (e instanceof ErrorEvent || (e.target && e.target.tagName === "SCRIPT")) && fail(), true);
+        loading.querySelector("button").addEventListener("click", () => location.reload());
+      })();
+    </script>
+    <script nomodule>
+      document.getElementById("loading").dataset.state = "old";
+    </script>
+    <div id="stage"></div>
+    <!-- The page's furniture: everything that is not the picture of the house is in here, so that it can all be put away at once (src/demo3d/ui-layer.ts). -->
+    <div id="ui">
+      <aside id="panel">
+        <h1 class="title">Domus</h1>
+        <div id="ledger" class="ledger"></div>
+        <h2 class="heading">Buy</h2>
+        <div id="market" class="market"></div>
+        <h2 class="heading">Inventions</h2>
+        <div id="lab" class="lab"></div>
+        <h2 class="heading">The household</h2>
+        <div id="cast" class="cast"></div>
+      </aside>
+    </div>
+    <!-- The developer's tools (the wrench, the dev menu and its windows): an element of their own, which a scene does not put away. -->
+    <div id="dev-tools"></div>
+    <script type="module" src="/src/demo3d/main.ts"></script>
+  </body>
+</html>

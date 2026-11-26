@@ -1,0 +1,2 @@
+/* The black before a scene and after it (curtain.ts): over everything, the dev menu's windows too. Its opacity is set as it fades. */
+.curtain { position: fixed; inset: 0; z-index: 10; background: #000; cursor: default; }

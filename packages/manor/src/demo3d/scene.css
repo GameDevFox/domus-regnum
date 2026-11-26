@@ -1,0 +1,84 @@
+/* A cutscene, over the picture of the house (scene-stage.ts). */
+
+/* It takes the whole window, over everything: a click anywhere moves it on. */
+.scene { position: fixed; inset: 0; z-index: 6; cursor: pointer; user-select: none; }
+
+/* A speaker's portrait: tall, standing at the foot of the screen at her own side. In shade until she speaks. */
+.scene-portrait {
+  position: absolute;
+  bottom: 0;
+  height: min(82vh, 760px);
+  pointer-events: none;
+  filter: brightness(0.5) saturate(0.6) drop-shadow(0 0 18px rgb(0 0 0 / 0.45));
+  transition: filter 0.2s;
+}
+.scene-portrait.speaking { filter: drop-shadow(0 0 18px rgb(0 0 0 / 0.45)); }
+/* Drawn facing right: at the left she faces in as she is; at the right she is mirrored, to face in from there. Each slides in from her own side. */
+.scene-portrait.left { left: max(8px, calc(50% - 620px)); animation: scene-in-left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.scene-portrait.right { right: max(8px, calc(50% - 620px)); transform: scaleX(-1); animation: scene-in-right 0.4s cubic-bezier(0.2, 0.9, 0.3, 1); }
+@keyframes scene-in-left { from { opacity: 0; transform: translateX(-55%); } to { opacity: 1; transform: none; } }
+@keyframes scene-in-right { from { opacity: 0; transform: translateX(55%) scaleX(-1); } to { opacity: 1; transform: scaleX(-1); } }
+
+/* The line: a box at the foot of the screen, with the speaker's name on a plate at her side of it. */
+.scene-box {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  width: min(780px, calc(100% - 32px));
+  transform: translateX(-50%);
+  padding: 20px 26px 18px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.6), inset 0 0 0 3px #f9f3e4;
+}
+.scene-box[hidden], .scene-name[hidden] { display: none; }
+.scene-name {
+  position: absolute;
+  top: -17px;
+  left: 22px;
+  padding: 4px 14px 5px;
+  font: 700 19px/1 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: 0.03em;
+  color: #fbf6e9;
+  background: var(--accent);
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.35);
+}
+.scene-name.right { left: auto; right: 22px; }
+.scene-text { min-height: 3.1em; margin: 0; font-size: 19px; line-height: 1.5; }
+/* The scene's own voice: nobody's line. */
+.scene-box.voice .scene-text { font-style: italic; text-align: center; color: var(--muted); }
+.scene-next { position: absolute; right: 16px; bottom: 8px; font-size: 12px; color: var(--accent); animation: scene-next 0.9s ease-in-out infinite alternate; }
+@keyframes scene-next { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
+.scene.asking .scene-next { display: none; }
+
+/* A choice: each answer a button over the line, with its number. */
+.scene-choices { position: absolute; left: 50%; bottom: 190px; display: grid; gap: 8px; width: min(600px, calc(100% - 32px)); transform: translateX(-50%); }
+.scene-choices:empty { display: none; }
+.scene-choice {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  background: #fbf0c9;
+  border: 1px solid #b8923a;
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.45);
+}
+.scene-choice:hover { border-color: var(--accent); color: var(--accent); }
+.scene-choice:active { border-bottom-width: 1px; margin-top: 2px; }
+
+@media (max-width: 640px) {
+  .scene-portrait { height: 56vh; }
+  .scene-text { font-size: 16px; }
+  .scene-choice { font-size: 15px; }
+}

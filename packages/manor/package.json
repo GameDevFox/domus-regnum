@@ -1,0 +1,37 @@
+{
+  "name": "manor",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "Edward Nicholes Jr.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "start": "vite",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "play": "tsx bin/play.ts",
+    "bots": "tsx bin/bots.ts"
+  },
+  "dependencies": {
+    "ngraph.graph": "^20.0.1",
+    "ngraph.path": "^1.5.0",
+    "react": "^19.1.1",
+    "react-colorful": "^5.7.0",
+    "react-dom": "^19.1.1",
+    "three": "^0.179.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^16.18.126",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@types/three": "^0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2",
+    "vite": "^8.0.13",
+    "vitest": "^4.1.8"
+  }
+}

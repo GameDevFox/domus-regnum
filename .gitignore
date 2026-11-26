@@ -1,0 +1,21 @@
+.claude/
+dist/
+node_modules/
+.yarn/install-state.gz
+
+*.blend1
+
+# Working scratch dir (images/scripts for in-progress work; tmp/ai-quarantine lives here)
+/tmp/
+
+# Placeholder VN art for the @kitsune/vn demo — not ours to commit, just for local play-testing
+packages/vn/demo/assets/
+
+# Playwright visual-harness output (see packages/domus/docs/headless-harness.md)
+**/.playwright-output/
+**/e2e/__screenshots__/
+test-results/
+playwright-report/
+
+# Account-specific AWS identifiers — kept per machine, never in the public repo
+deploy/aws/

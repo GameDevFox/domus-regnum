@@ -1,0 +1,11 @@
+/* The card of a place of work (work-card.ts), and the part of it that says who works there (work-crew.ts), which the garden's card has too. */
+.help-card.work-card { width: min(360px, 100%); }
+/* Who has the work, at the head of the card. */
+.work-keeper { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; color: var(--muted); }
+.work-keeper-none { display: grid; opacity: 0.6; }
+.work-count { margin-left: auto; font-size: 13px; font-variant-numeric: tabular-nums; }
+/* What the place has to work with, each as a picture and a number. */
+.work-facts { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.work-fact { padding: 3px 9px; font-size: 14px; font-variant-numeric: tabular-nums; background: #fbf6e9; border: 1px solid var(--paper-edge); border-radius: 999px; }
+/* On the garden's card the faces are over the seeds. */
+.garden-card .who-row { max-width: 340px; margin-bottom: 10px; }

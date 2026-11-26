@@ -1,0 +1,30 @@
+{
+  "name": "domus-regnum",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "author": "Edward Nicholes Jr.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "yarn build:libs",
+    "build:libs": "yarn workspace @kitsune/common build && yarn workspace @kitsune/common-web build",
+    "start": "yarn workspace manor start",
+    "test": "yarn workspaces foreach --all --exclude domus-regnum run test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "fix": "eslint . --fix && prettier --write ."
+  },
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^13.24.0",
+    "prettier": "^3.8.3"
+  }
+}

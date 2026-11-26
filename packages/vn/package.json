@@ -1,0 +1,53 @@
+{
+  "name": "@kitsune/vn",
+  "version": "0.0.1",
+  "license": "AGPL-3.0-only",
+  "author": "Edward Nicholes Jr.",
+  "description": "A web-native visual-novel engine: a framework-agnostic script runtime, with optional Three.js sprite compositing and React dialogue UI, designed to render over a live game view.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./three": {
+      "types": "./dist/three/index.d.ts",
+      "default": "./dist/three/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "vite",
+    "shoot": "node scripts/shoot.mjs"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "three": "^0.179.1"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/three": "^0",
+    "three": "^0.179.1",
+    "typescript": "^5.9.2",
+    "vite": "^8.0.13",
+    "vitest": "^4.1.8"
+  }
+}

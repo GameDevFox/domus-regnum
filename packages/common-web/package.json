@@ -1,0 +1,36 @@
+{
+  "name": "@kitsune/common-web",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-only",
+  "author": "Edward Nicholes Jr.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "start": "tsc --watch --preserveWatchOutput",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "three": "^0.179.1"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.2",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.8"
+  }
+}

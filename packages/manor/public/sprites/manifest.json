@@ -1,0 +1,39 @@
+{
+  "canvas": [
+    256,
+    352
+  ],
+  "anchor": "bottom-center",
+  "sprites": {
+    "evelyn": {
+      "front": "evelyn-front.png",
+      "back": "evelyn-back.png",
+      "heightPx": 300
+    },
+    "maid-rose": {
+      "front": "maid-rose-front.png",
+      "back": "maid-rose-back.png",
+      "heightPx": 300
+    },
+    "maid-sage": {
+      "front": "maid-sage-front.png",
+      "back": "maid-sage-back.png",
+      "heightPx": 300
+    },
+    "master": {
+      "front": "master-front.png",
+      "back": "master-back.png",
+      "heightPx": 325
+    },
+    "townswoman": {
+      "front": "townswoman-front.png",
+      "back": "townswoman-back.png",
+      "heightPx": 300
+    },
+    "townsman": {
+      "front": "townsman-front.png",
+      "back": "townsman-back.png",
+      "heightPx": 315
+    }
+  }
+}
